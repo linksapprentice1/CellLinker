@@ -11,6 +11,6 @@ Each row represents a set of cells that will be linked to each other
 
 Run the Python code. A text file will be generated containing VBA code.
 
-Open an Excel file. Developer -> Visual Basic -> Workbook. Copy and paste the VBA code into the editor. 
+Open an Excel file. Developer -> Visual Basic -> ThisWorkbook (in tree on left, under Microsoft Excel Object, under VBAProject). Copy and paste the VBA code into the editor. 
 Close out of the file and reopen it. It will now function properly.
 
