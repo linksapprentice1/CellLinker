@@ -14,25 +14,33 @@ Private Sub Workbook_Open()
 
    Set loc_map = New Collection"""
 
-for tuples in tuples_by_line:
-   vba = vba + """   ReDim loc_set(0 To """+ str(len(tuples) - 1) + """) As String 
+
+for index, tuples in enumerate(tuples_by_line):
+
+   vba = vba + """
+   ReDim loc_set(0 To """+ str(len(tuples) - 1) + """) As String 
 
 """
    for i, tup in enumerate(tuples):
-      vba = vba + """   loc_set(""" + str(i) + """) = """ + " ".join(tup) + """ 
+      vba = vba + """   loc_set(""" + str(i) + """) = \"""" + " ".join(tup) + """\"
 """
+
+   vba = vba + ("""
+   Dim loc As Variant
+""" if index == 0 else "")
    
    vba = vba + """
-   Dim loc As Variant
    For i = 0 To UBound(loc_set)
       loc_map.Add Minus(loc_set, loc_set(i)), loc_set(i)
    Next
    
    Erase loc_set
-
 """
 
-vba = vba + """Private Function Minus(ByRef old_list() As String, loc As Variant) As String()
+vba = vba + """
+End Sub
+
+Private Function Minus(ByRef old_list() As String, loc As Variant) As String()
 
    Dim split_loc() As String
    split_loc = Split(loc)
