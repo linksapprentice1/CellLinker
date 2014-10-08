@@ -1,34 +1,38 @@
-Public loc_map As Collection
+with open("cells_to_link.txt", "r") as f:
+   lines = f.readlines()
+
+def formTuples(x):
+   x = x.split()
+   return zip(x[0::2], x[1::2])
+   
+tuples_by_line = map(formTuples, lines)
+
+
+vba = """Public loc_map As Collection
 
 Private Sub Workbook_Open()
 
-   Set loc_map = New Collection
+   Set loc_map = New Collection"""
+
+for tuples in tuples_by_line:
+   vba = vba + """   ReDim loc_set(0 To """+ str(len(tuples) - 1) + """) As String 
+
+"""
+   for i, tup in enumerate(tuples):
+      vba = vba + """   loc_set(""" + str(i) + """) = """ + " ".join(tup) + """ 
+"""
    
-   Dim loc_set(0 To 2) As String
-      
-   loc_set(0) = "$A$1 Sheet1"
-   loc_set(1) = "$A$2 Sheet1"
-   loc_set(2) = "$A$3 Sheet1"
-   
+   vba = vba + """
    Dim loc As Variant
    For i = 0 To UBound(loc_set)
       loc_map.Add Minus(loc_set, loc_set(i)), loc_set(i)
    Next
    
    Erase loc_set
-   
-   loc_set(0) = "$B$1 Sheet2"
-   loc_set(1) = "$B$2 Sheet2"
-   loc_set(2) = "$B$3 Sheet2"
-   
-   For i = 0 To UBound(loc_set)
-      loc_map.Add Minus(loc_set, loc_set(i)), loc_set(i)
-   Next
 
-End Sub
+"""
 
-
-Private Function Minus(ByRef old_list() As String, loc As Variant) As String()
+vba = vba + """Private Function Minus(ByRef old_list() As String, loc As Variant) As String()
 
    Dim split_loc() As String
    split_loc = Split(loc)
@@ -76,4 +80,7 @@ Public Function Contains(col As Collection, key As Variant) As Boolean
         Exit Function
 err:
         Contains = False
-End Function
+End Function"""
+
+with open("vba_code.txt", "w") as f:
+   f.write(vba)
